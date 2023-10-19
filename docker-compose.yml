@@ -19,7 +19,8 @@ services:
       retries: 24
       start_period: 12s
   backend:
-    build: ../toktik-backend/
+    image: ghcr.io/thanawat-toktik/toktik-backend:latest
+    build: https://github.com/thanawat-toktik/toktik-backend.git#main
     environment:
       - DATABASE_HOST=database
       - DATABASE_PORT=${DATABASE_PORT}
@@ -38,7 +39,8 @@ services:
       - back-office
       - user-facing
   frontend:
-    build: ../toktik-frontend/toktik-frontend/
+    image: ghcr.io/thanawat-toktik/toktik-frontend:latest
+    build: https://github.com/thanawat-toktik/toktik-frontend.git#main:toktik-frontend
     depends_on:
       - backend
     networks:
