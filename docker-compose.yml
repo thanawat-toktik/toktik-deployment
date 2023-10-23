@@ -20,9 +20,8 @@ services:
       start_period: 12s
 
   backend:
-    # image: ghcr.io/thanawat-toktik/toktik-backend:latest
-    # build: https://github.com/thanawat-toktik/toktik-backend.git#main
-    build: ../toktik-backend/
+    image: ghcr.io/thanawat-toktik/toktik-backend:latest
+    build: https://github.com/thanawat-toktik/toktik-backend.git#main
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DATABASE_HOST=database
@@ -47,9 +46,8 @@ services:
       - user-facing
 
   frontend:
-    # image: ghcr.io/thanawat-toktik/toktik-frontend:latest
-    # build: https://github.com/thanawat-toktik/toktik-frontend.git#main:toktik-frontend
-    build: ../toktik-frontend/toktik-frontend/
+    image: ghcr.io/thanawat-toktik/toktik-frontend:latest
+    build: https://github.com/thanawat-toktik/toktik-frontend.git#main:toktik-frontend
     depends_on:
       - backend
     networks:
