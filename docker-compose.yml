@@ -21,7 +21,8 @@ services:
 
   backend:
     image: ghcr.io/thanawat-toktik/toktik-backend:latest
-    build: https://github.com/thanawat-toktik/toktik-backend.git#main
+    # build: https://github.com/thanawat-toktik/toktik-backend.git#main
+    build: ../toktik-backend/
     environment:
       - SECRET_KEY=${SECRET_KEY}
       - DATABASE_HOST=database
@@ -68,6 +69,7 @@ services:
     image: redis:alpine
     networks:
       - back-office
+      - back-worker
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 3s
@@ -75,9 +77,10 @@ services:
       start_period: 12s
 
   vid-converter:
+    image: ghcr.io/thanawat-toktik/toktik-vid-convert:latest
     build: ../toktik-vid-convert/
     networks:
-      - back-office
+      - back-worker
     environment:
       - S3_ACCESS_KEY=${S3_ACCESS_KEY}
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
@@ -105,6 +108,7 @@ services:
 networks:
   user-facing:
   back-office:
+  back-worker:
 
 volumes:
   database-vol:
