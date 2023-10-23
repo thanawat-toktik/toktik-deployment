@@ -24,6 +24,7 @@ services:
     # build: https://github.com/thanawat-toktik/toktik-backend.git#main
     build: ../toktik-backend/
     environment:
+      - SECRET_KEY=${SECRET_KEY}
       - DATABASE_HOST=database
       - DATABASE_PORT=${DATABASE_PORT}
       - DATABASE_USER=${DATABASE_USER}
@@ -34,9 +35,8 @@ services:
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - S3_RAW_ENDPOINT=${S3_RAW_ENDPOINT}
       - S3_REGION=${S3_REGION}
-      - MQ_HOSTNAME=queue
-      - MQ_PORT=5672
-      - SECRET_KEY=${SECRET_KEY}
+      - REDIS_HOSTNAME=queue
+      - REDIS_PORT=6379
     depends_on:
       database:
         condition: service_healthy
@@ -45,7 +45,7 @@ services:
     networks:
       - back-office
       - user-facing
-      
+
   frontend:
     # image: ghcr.io/thanawat-toktik/toktik-frontend:latest
     # build: https://github.com/thanawat-toktik/toktik-frontend.git#main:toktik-frontend
@@ -67,11 +67,11 @@ services:
       - user-facing
 
   queue:
-    image: rabbitmq:management-alpine
+    image: redis:alpine
     networks:
       - back-office
     healthcheck:
-      test: rabbitmq-diagnostics -q ping
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
       interval: 3s
       retries: 24
       start_period: 12s
@@ -87,13 +87,15 @@ services:
       - S3_CONVERTED_BUCKET_NAME=${S3_CONVERTED_BUCKET_NAME}
       - S3_RAW_ENDPOINT=${S3_RAW_ENDPOINT}
       - S3_REGION=${S3_REGION}
-      - MQ_HOSTNAME=queue
-      - MQ_PORT=5672
+      - REDIS_HOSTNAME=queue
+      - REDIS_PORT=6379
     depends_on:
       queue:
         condition: service_healthy
+
   queue-check-scheduler:
-    build: ../toktik-scheduler/
+    image: ghcr.io/thanawat-toktik/toktik-scheduler:latest
+    build: https://github.com/thanawat-toktik/toktik-scheduler.git
     networks:
       - back-office
     environment:
