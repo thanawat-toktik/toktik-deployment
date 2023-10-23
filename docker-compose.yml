@@ -18,10 +18,13 @@ services:
       interval: 3s
       retries: 24
       start_period: 12s
+
   backend:
     image: ghcr.io/thanawat-toktik/toktik-backend:latest
-    build: https://github.com/thanawat-toktik/toktik-backend.git#main
+    # build: https://github.com/thanawat-toktik/toktik-backend.git#main
+    build: ../toktik-backend/
     environment:
+      - SECRET_KEY=${SECRET_KEY}
       - DATABASE_HOST=database
       - DATABASE_PORT=${DATABASE_PORT}
       - DATABASE_USER=${DATABASE_USER}
@@ -32,12 +35,17 @@ services:
       - S3_BUCKET_NAME=${S3_BUCKET_NAME}
       - S3_RAW_ENDPOINT=${S3_RAW_ENDPOINT}
       - S3_REGION=${S3_REGION}
+      - REDIS_HOSTNAME=queue
+      - REDIS_PORT=6379
     depends_on:
       database:
+        condition: service_healthy
+      queue:
         condition: service_healthy
     networks:
       - back-office
       - user-facing
+
   frontend:
     image: ghcr.io/thanawat-toktik/toktik-frontend:latest
     build: https://github.com/thanawat-toktik/toktik-frontend.git#main:toktik-frontend
@@ -45,6 +53,7 @@ services:
       - backend
     networks:
       - user-facing
+
   proxy:
     image: nginx:stable-alpine-slim
     ports:
@@ -56,9 +65,50 @@ services:
     networks:
       - user-facing
 
+  queue:
+    image: redis:alpine
+    networks:
+      - back-office
+      - back-worker
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 3s
+      retries: 24
+      start_period: 12s
+
+  vid-converter:
+    image: ghcr.io/thanawat-toktik/toktik-vid-convert:latest
+    build: ../toktik-vid-convert/
+    networks:
+      - back-worker
+    environment:
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+      - S3_RAW_BUCKET_NAME=${S3_RAW_BUCKET_NAME}
+      - S3_CONVERTED_BUCKET_NAME=${S3_CONVERTED_BUCKET_NAME}
+      - S3_RAW_ENDPOINT=${S3_RAW_ENDPOINT}
+      - S3_REGION=${S3_REGION}
+      - REDIS_HOSTNAME=queue
+      - REDIS_PORT=6379
+    depends_on:
+      queue:
+        condition: service_healthy
+
+  queue-check-scheduler:
+    image: ghcr.io/thanawat-toktik/toktik-scheduler:latest
+    build: https://github.com/thanawat-toktik/toktik-scheduler.git
+    networks:
+      - back-office
+    environment:
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+    depends_on:
+      - backend
+
 networks:
   user-facing:
   back-office:
+  back-worker:
 
 volumes:
   database-vol:
