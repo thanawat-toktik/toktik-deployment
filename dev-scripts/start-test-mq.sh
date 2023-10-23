@@ -5,3 +5,8 @@ docker run \
     -p "15673:15672" \
     -d \
     rabbitmq:management-alpine
+
+docker run \
+    -p "6381:6379" \
+    -d \
+    redis:alpine
