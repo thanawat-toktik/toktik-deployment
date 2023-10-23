@@ -92,6 +92,15 @@ services:
     depends_on:
       queue:
         condition: service_healthy
+  queue-check-scheduler:
+    build: ../toktik-scheduler/
+    networks:
+      - back-office
+    environment:
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8000
+    depends_on:
+      - backend
 
 networks:
   user-facing:
