@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-check-scheduler
+  labels:
+    app: queue-check-scheduler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: queue-check-scheduler
+  template:
+    metadata:
+      labels:
+        app: queue-check-scheduler
+    spec:
+      containers:
+        - name: scheduler
+          image: ghcr.io/thanawat-toktik/toktik-scheduler:latest
+          env:
+            - name: BACKEND_HOST
+              value: backend
+            - name: BACKEND_PORT
+              value: "8000"
+      imagePullSecrets:
+        - name: ghcr-secret
