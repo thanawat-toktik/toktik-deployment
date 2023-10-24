@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: toktik-frontend
-          image: ghcr.io/thanawat-toktik/toktik-frontend:arm
+          image: ghcr.io/thanawat-toktik/toktik-frontend:latest
           ports:
             - containerPort: 80
       imagePullSecrets:

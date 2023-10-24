@@ -24,7 +24,8 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: backend-secrets
-                  key: SECRET_KEY
+                  key: django-secret-key
+
             - name: DATABASE_HOST
               value: database
             - name: DATABASE_PORT
@@ -32,40 +33,57 @@ spec:
             - name: DATABASE_NAME
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: DATABASE_NAME
+                  name: database-secrets
+                  key: db_name
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: DATABASE_USER
+                  name: database-secrets
+                  key: username
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: DATABASE_PASSWORD
+                  name: database-secrets
+                  key: password
+
             - name: S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: S3_ACCESS_KEY
+                  name: s3-secrets
+                  key: access-key
             - name: S3_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: S3_SECRET_ACCESS_KEY
-            - name: S3_BUCKET_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: backend-secrets
-                  key: S3_BUCKET_NAME
+                  name: s3-secrets
+                  key: secret-key
             - name: S3_RAW_ENDPOINT
               valueFrom:
                 secretKeyRef:
-                  name: backend-secrets
-                  key: S3_RAW_ENDPOINT
+                  name: s3-secrets
+                  key: endpoint
             - name: S3_REGION
               value: "us-east-1"
+            - name: S3_BUCKET_NAME_RAW
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: raw-bucket
+            - name: S3_BUCKET_NAME_CONVERTED
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: converted-bucket
+            - name: S3_BUCKET_NAME_CHUNKED
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: chunked-bucket
+            - name: S3_BUCKET_NAME_THUMBNAIL
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: thumbnail-bucket
+
             - name: REDIS_HOSTNAME
               value: queue
             - name: REDIS_PORT
