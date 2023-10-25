@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: converter
+  labels:
+    app: converter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: converter
+  template:
+    metadata:
+      labels:
+        app: converter
+    spec:
+      initContainers:
+        - name: queue-healthcheck
+          image: busybox:latest
+          command: ["sh", "-c", "until nc -z queue 6379; do sleep 5; done"]
+      containers:
+        - name: toktik-vid-convert
+          image: ghcr.io/thanawat-toktik/toktik-vid-convert:latest
+          env:
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: access-key
+            - name: S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: secret-key
+            - name: S3_BUCKET_NAME_RAW
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: raw-bucket
+            - name: S3_BUCKET_NAME_CONVERTED
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: converted-bucket
+            - name: S3_RAW_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: endpoint
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: REDIS_HOSTNAME
+              value: queue
+            - name: REDIS_PORT
+              value: "6379"
+      imagePullSecrets:
+        - name: ghcr-secret

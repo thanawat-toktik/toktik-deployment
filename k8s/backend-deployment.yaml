@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: database-healthcheck
+          image: busybox:latest
+          command: ["sh", "-c", "until nc -z database 5432; do sleep 5; done"]
+        - name: queue-healthcheck
+          image: busybox:latest
+          command: ["sh", "-c", "until nc -z queue 6379; do sleep 5; done"]
+      containers:
+        - name: toktik-backend
+          image: ghcr.io/thanawat-toktik/toktik-backend:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: django-secret-key
+
+            - name: DATABASE_HOST
+              value: database
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: db_name
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: password
+
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: access-key
+            - name: S3_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: secret-key
+            - name: S3_RAW_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: endpoint
+            - name: S3_REGION
+              value: "us-east-1"
+            - name: S3_BUCKET_NAME_RAW
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: raw-bucket
+            - name: S3_BUCKET_NAME_CONVERTED
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: converted-bucket
+            - name: S3_BUCKET_NAME_CHUNKED
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: chunked-bucket
+            - name: S3_BUCKET_NAME_THUMBNAIL
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: thumbnail-bucket
+
+            - name: REDIS_HOSTNAME
+              value: queue
+            - name: REDIS_PORT
+              value: "6379"
+      imagePullSecrets:
+        - name: ghcr-secret
