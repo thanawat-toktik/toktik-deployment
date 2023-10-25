@@ -38,6 +38,12 @@ spec:
           volumeMounts:
             - name: database-pvc
               mountPath: /var/lib/postgresql/data
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "pg_isready", "-U", "$POSTGRES_USER"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 20
       volumes:
         - name: database-pvc
           persistentVolumeClaim:
