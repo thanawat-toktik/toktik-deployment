@@ -28,12 +28,12 @@ spec:
                 secretKeyRef:
                   name: s3-secrets
                   key: secret-key
-            - name: S3_RAW_BUCKET_NAME
+            - name: S3_BUCKET_NAME_RAW
               valueFrom:
                 secretKeyRef:
                   name: s3-secrets
                   key: raw-bucket
-            - name: S3_CONVERTED_BUCKET_NAME
+            - name: S3_BUCKET_NAME_CONVERTED
               valueFrom:
                 secretKeyRef:
                   name: s3-secrets
