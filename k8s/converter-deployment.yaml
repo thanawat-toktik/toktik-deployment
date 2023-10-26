@@ -17,7 +17,7 @@ spec:
       initContainers:
         - name: queue-healthcheck
           image: busybox:latest
-          command: ["sh", "-c", "until nc -z queue 6379; do sleep 5; done"]
+          command: ["sh", "-c", "until nc -z queue 6379; do sleep 1; done"]
       containers:
         - name: toktik-vid-convert
           image: ghcr.io/thanawat-toktik/toktik-vid-convert:latest
