@@ -20,7 +20,7 @@ spec:
           command: ["sh", "-c", "until nc -z queue 6379; do sleep 1; done"]
       containers:
         - name: toktik-vid-convert
-          image: ghcr.io/thanawat-toktik/toktik-vid-chonker:test
+          image: ghcr.io/thanawat-toktik/toktik-vid-chonker:latest
           env:
             - name: S3_ACCESS_KEY
               valueFrom:
