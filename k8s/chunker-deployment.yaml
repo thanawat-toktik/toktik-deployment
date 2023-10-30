@@ -21,6 +21,7 @@ spec:
       containers:
         - name: toktik-vid-convert
           image: ghcr.io/thanawat-toktik/toktik-vid-chonker:latest
+          imagePullPolicy: Always
           env:
             - name: S3_ACCESS_KEY
               valueFrom:
