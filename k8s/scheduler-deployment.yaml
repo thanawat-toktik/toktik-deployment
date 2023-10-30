@@ -17,6 +17,7 @@ spec:
       containers:
         - name: scheduler
           image: ghcr.io/thanawat-toktik/toktik-scheduler:latest
+          imagePullPolicy: Always
           env:
             - name: BACKEND_HOST
               value: backend

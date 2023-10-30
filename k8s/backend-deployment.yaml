@@ -17,13 +17,14 @@ spec:
       initContainers:
         - name: database-healthcheck
           image: busybox:latest
-          command: ["sh", "-c", "until nc -z database 5432; do sleep 5; done"]
+          command: ["sh", "-c", "until nc -z database 5432; do sleep 1; done"]
         - name: queue-healthcheck
           image: busybox:latest
-          command: ["sh", "-c", "until nc -z queue 6379; do sleep 5; done"]
+          command: ["sh", "-c", "until nc -z queue 6379; do sleep 1; done"]
       containers:
         - name: toktik-backend
           image: ghcr.io/thanawat-toktik/toktik-backend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:
