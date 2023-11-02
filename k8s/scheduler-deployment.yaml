@@ -23,5 +23,7 @@ spec:
               value: backend
             - name: BACKEND_PORT
               value: "8000"
+            - name: INTERVAL
+              value: "5"
       imagePullSecrets:
         - name: ghcr-secret
