@@ -38,11 +38,11 @@ spec:
                 secretKeyRef:
                   name: s3-secrets
                   key: converted-bucket
-            - name: S3_BUCKET_NAME_THUMBNAIL
+            - name: S3_BUCKET_NAME_CHUNKED
               valueFrom:
                 secretKeyRef:
                   name: s3-secrets
-                  key: thumbnail-bucket
+                  key: chunked-bucket
             - name: S3_RAW_ENDPOINT
               valueFrom:
                 secretKeyRef:

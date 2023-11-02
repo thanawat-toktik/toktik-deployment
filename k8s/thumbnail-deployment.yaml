@@ -33,11 +33,11 @@ spec:
                 secretKeyRef:
                   name: s3-secrets
                   key: secret-key
-            - name: S3_BUCKET_NAME_RAW
+            - name: S3_BUCKET_NAME_THUMBNAIL
               valueFrom:
                 secretKeyRef:
                   name: s3-secrets
-                  key: raw-bucket
+                  key: thumbnail-bucket
             - name: S3_BUCKET_NAME_CONVERTED
               valueFrom:
                 secretKeyRef:
