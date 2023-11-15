@@ -20,5 +20,10 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
+          env:
+          - name: VUE_APP_WS_HOST
+            value: notification
+          - name: WS_PORT
+            value: "3000"
       imagePullSecrets:
         - name: ghcr-secret
