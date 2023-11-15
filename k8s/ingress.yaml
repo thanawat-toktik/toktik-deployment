@@ -4,7 +4,7 @@ metadata:
   name: ingress
   annotations:
     traefik.websocket.passthrough: "true"
-    traefik.wss.protocol: https
+    ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
     - http:

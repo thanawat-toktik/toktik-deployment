@@ -24,6 +24,6 @@ spec:
             - name: VUE_APP_WS_HOST
               value: notification
             - name: VUE_APP_WS_PORT
-              value: "3000"
+              value: "80"
       imagePullSecrets:
         - name: ghcr-secret
