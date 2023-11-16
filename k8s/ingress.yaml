@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   name: ingress
   annotations:
+    traefik.websocket.passthrough: "true"
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
@@ -15,6 +16,13 @@ spec:
                 name: backend
                 port:
                   number: 8000
+          - pathType: Prefix
+            path: /socket.io/
+            backend:
+              service:
+                name: notification
+                port:
+                  number: 3000
           - pathType: Prefix
             path: /
             backend:

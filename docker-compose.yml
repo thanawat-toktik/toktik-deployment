@@ -137,6 +137,15 @@ services:
     depends_on:
       - backend
 
+  notification:
+    image: ghcr.io/thanawat-toktik/toktik-notifications:latest
+    networks:
+      - back-worker
+      - user-facing
+    environment:
+      - REDIS_HOSTNAME=queue
+      - REDIS_PORT=6379
+
 networks:
   user-facing:
   back-office:
